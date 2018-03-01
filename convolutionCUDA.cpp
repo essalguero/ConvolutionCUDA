@@ -2,6 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 
+__global__ void kernel(float * deviceImage, float * deviceImageProcessed, float * deviceFilter, int filterHeight, int filterWidth, int imageHeight, int imageWidth)
+{
+    __shared__ float filter[filterHeigth][filterWidth];
+    __shared__ float image[filterHeigth + 2][filterWidth + 2];
+
+    //Copiar la matriz del filtro a memoria compartida
+    
+
+    //Copiar la parte de la imagen correspondiente a memoria compartida
+}
+
 int main (int argc, char ** argv)
 {
 
@@ -10,6 +21,10 @@ int main (int argc, char ** argv)
     float * hostImage = NULL, * hostFilter = NULL, * hostImageProcessed = NULL;
     int imageWidth = 0, imageHeight = 0, filterWidth = 0, filterHeith = 0, imageProcessedWidth = 0, imageProcessedHeight = 0;
     int block_size = 0;
+
+    dim3 block;
+    dim3 grid;
+
 
     printf("Ejecucion comenzada\n");
 
@@ -59,7 +74,16 @@ int main (int argc, char ** argv)
 
     //cudaMemset(deviceImageProcessed, 0, imageWidth * imageHeight * sizeof(float));
 
+    
+    // Hacer los tamaños de bloque de tareas en funcion del tamaño de la matriz del filtro
+    
 
+
+    //llamada al kerner
+    kernel<<<grid, block>>> (deviceImage, deviceImageProcessed, deviceFilter, filterHeight, filterWidth, imageHeight, imageWidth);
+
+
+    
     
 
     printf("Ejecucion finalizada\n");
