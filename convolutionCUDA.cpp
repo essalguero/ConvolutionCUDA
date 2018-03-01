@@ -30,34 +30,46 @@ int main (int argc, char ** argv)
     imageWidth = 10;
     imageHeight = 10;
 
-    // La imagen sobre la que aplicar el filtro, para evitar problemas con los indices, se crea
+
+
+    hostImageProcessed = (float *)malloc(imageWidth * imageHeight * sizeof(float));
+
+    hostImage = (float *)malloc(imageWidth * imageHeight * sizeof(float));
+
+   
+
+    //Cargar la imagen a GPU
+
+    // La imagen sobre la que aplicar el filtro se crea
     // dos filas y dos columnas mas grandes en el device y se inicializan a 0
+    // Esto permite evitar problemas con los indices
+
     imageProcessedWidth = imageWidth + 2;
     imageProcessedHeight = imageHeight + 2;
 
-
-    hostImageProcessed = (float *)malloc(imageProcessedWidth * imageProcessedHeight * sizeof(float));
-
-    hostImage = (float *)malloc(imageProcessedWidth * imageProcessedHeight * sizeof(float));
-
-    memset(hostImageProcessed, 0, imageProcessedWidth * imageProcessedHeight * sizeof(float));
-
-
-    //Cargar la imagen
-
     //Reservar memoria en la tarjeta para cargar la imagen
-    cudaMalloc(deviceImageProcessed, imageProcessedWidth * imageProcessedHeight * sizeof(float));
-    
+    cudaMalloc(deviceImage, imageProcessedWidth * imageProcessedHeight * sizeof(float));
+    cudaMemset(deviceImage, 0, imageProcessedWidth * imageProcessedHeight * sizeof(float));
+
     // Copiar la imagen a la tarjeta
-    memcpy(deviceImage + imageProcessed Height, imageWidth * imageHeight * sizeof(float));
+    memcpy(deviceImage + imageProcessedWidth, hostImage, imageWidth * imageHeight * sizeof(float), cudaMemcpyDeviceToHost);
 
     //Reservar memoria en la tarjeta para guardar la imagen procesada
-    cudaMalloc(deviceImageProcessed, imageProcessedWidth * imageProcessedHeight * sizeof(float));
+    cudaMalloc(deviceImageProcessed, imageWidth * imageHeight * sizeof(float));
+
+    //cudaMemset(deviceImageProcessed, 0, imageWidth * imageHeight * sizeof(float));
+
+
+    
 
     printf("Ejecucion finalizada\n");
     printf("Liberando memoria...\n");
 
     free(hostImageProcessed);
+    free(hostImage);
+
+    cudaFree(deviceImage);
+    cudaFree(deviceImageProcessed);
 
     exit(1);
 }
